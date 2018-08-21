@@ -11,6 +11,8 @@ userPass="pass"
 description="web api"
 nameOrg="test"
 svnUrl="svn://your_url"
+gitUrl="http://git.yourdomain.name"
+idTeam = "11"
 
 ./snakeToCamel -in $fileIn -out $fileOut -pref "${prefix}"
 
@@ -22,8 +24,8 @@ do
     nameDir=${nameRepo[0]}
     nameRepo=${nameRepo[1]}
     
-    curl -X POST "http://git.srv.sec45.ccr.dep4.niitp/api/v1/org/${nameOrg}/repos?access_token=${token}" -H "accept: application/json" -H "content-type: application/json" -d "{\"name\":\"${nameRepo}\", \"description\": \"${description}\" }"
-    curl -X PUT "http://git.srv.sec45.ccr.dep4.niitp/api/v1/teams/11/repos/${nameOrg}/${nameRepo}?access_token=${token}" -H "accept: application/json" -H "content-type: application/json"
+    curl -X POST "${gitUrl}/api/v1/org/${nameOrg}/repos?access_token=${token}" -H "accept: application/json" -H "content-type: application/json" -d "{\"name\":\"${nameRepo}\", \"description\": \"${description}\" }"
+    curl -X PUT "${gitUrl}/api/v1/teams/${idTeam}/repos/${nameOrg}/${nameRepo}?access_token=${token}" -H "accept: application/json" -H "content-type: application/json"
 
     git svn clone --authors-file=$fileUsers --username $userName --no-metadata --stdlayout ${svnUrl}/${nameDir} $nameDir  #удалил trunk
     cd $nameDir
@@ -34,7 +36,7 @@ do
     git config --remove-section svn
     rm -rf .git/svn
     git gc
-    git remote add origin http://git.srv.sec45.ccr.dep4.niitp/${nameOrg}/${nameRepo}.git
-    git push -u http://${userName}:${userPass}@git.srv.sec45.ccr.dep4.niitp/${nameOrg}/${nameRepo}.git master
+    git remote add origin ${gitUrl}/${nameOrg}/${nameRepo}.git
+    git push -u http://${userName}:${userPass}@${gitUrl}/${nameOrg}/${nameRepo}.git master
     cd ..
 done < $fileOut
