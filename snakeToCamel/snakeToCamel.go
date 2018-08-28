@@ -5,14 +5,15 @@ import (
 	"flag"
 	"log"
 	"os"
+	"regexp"
 	"strings"
 )
 
 func main() {
 	var (
-		pathIn  = flag.String("in", "/home/galchenko/projects/adm/create_repo_gitea/nameRepos.txt", "the fail with data")
+		pathIn  = flag.String("in", "/home/galchenko/projects/go/src/work/utils/createRepoGiteaFromRepoSvn/nameRepos.txt", "the fail with data")
 		prefix  = flag.String("pref", "", "the prefix for new names in the outfile")
-		pathOut = flag.String("out", "/home/galchenko/projects/adm/create_repo_gitea/newNameRepos.txt", "the fail with new data")
+		pathOut = flag.String("out", "/home/galchenko/projects/go/src/work/utils/createRepoGiteaFromRepoSvn/newNameRepos.txt", "the fail with new data")
 	)
 	flag.Parse()
 
@@ -42,7 +43,8 @@ func main() {
 //SnakeToCamel по строке в формате змейки строит строку кэмелкейса
 func SnakeToCamel(strIn string, prefix string) string {
 	var strOut = prefix
-	strSlice := strings.Split(strIn, "_")
+	reg := regexp.MustCompile("[_,-]")
+	strSlice := reg.Split(strIn, -1)
 	for i, item := range strSlice {
 		if prefix != "" {
 			strOut = strOut + strings.Title(item)
